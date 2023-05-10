@@ -4,6 +4,7 @@ const router = require("express").Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
+const { authorize } = require("../utils");
 
 router
   //signup endpoint
@@ -90,19 +91,6 @@ router
   })
   .post("/skills", async (req, res) => {
     decodedToken = authorize(req.headers.authorization);
-    
   });
 
-function authorize(auth) {
-  // auth = req.headers.authorization;
-
-  if (!auth) {
-    return res.status(401).send("no auth");
-  }
-
-  // Parse out the bearer token
-  const token = auth.split(" ")[1];
-  const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
-  return decodedToken;
-}
 module.exports = router;
