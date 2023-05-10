@@ -2,19 +2,21 @@ const knexConfig = require("../knexfile");
 const knex = require("knex")(knexConfig["development"]);
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
 
 router
+  //signup endpoint
   .post("/signup", (req, res) => {
-    const { user, password } = req.body;
+    const { username, password } = req.body;
     const id = uuidv4();
-    if (!user || !password) {
+    if (!username || !password) {
       res.status(400).send("Missing field");
     }
     const newUser = {
       id: id,
-      username: user,
-      password: password,
+      username: username,
+      password: bcrypt.hashSync(password),
     };
     knex("users")
       .insert(newUser)
@@ -25,23 +27,82 @@ router
         res.status(400).send(err);
       });
   })
+  .post("/login", async (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).send("Please enter the required fields");
+    }
+
+    const user = await knex("users").where({ username }).first();
+
+    if (!user) {
+      return res.status(400).send("no user with that username");
+    }
+
+    const isPasswordCorrect = bcrypt.compareSync(password, user.password);
+
+    if (!isPasswordCorrect) {
+      return res.status(400).send("Incorrect Password");
+    }
+
+    const token = jwt.sign(
+      { username: user.username, id: user.id },
+      process.env.SECRET_KEY
+    );
+    res.json({ token });
+  })
   //get info for specific user
-  .get("/:userId", (req, res) => {
-    knex("users")
-      .where("id", req.params.userId)
-      .select("*")
-      .then((result) => {
-        res.status(200).send(result);
-      });
+  .get("/current", async (req, res) => {
+    decodedToken = authorize(req.headers.authorization);
+    try {
+      // log the decoded token to the console
+      console.log(decodedToken);
+
+      // get user using 'first'
+      const user = await knex("users").where({ id: decodedToken.id }).first();
+
+      // create a variable called 'userWithoutPassword' that is... the user without the 'password' property
+      const { password, ...userWithoutPassword } = user;
+      // sent to front-end
+      res.json(userWithoutPassword);
+    } catch (e) {
+      console.log(e);
+      res.status(400).json({ error: e });
+    }
   })
   //get skills for specific user
-  .get("/skills/:userId", (req, res) => {
-    knex("skills")
-      .where("user_id", req.params.userId)
-      .select("*")
-      .then((result) => {
-        res.send(result);
-      });
+  .get("/skills", async (req, res) => {
+    decodedToken = authorize(req.headers.authorization);
+    try {
+      // log the decoded token to the console
+      console.log(decodedToken);
+
+      // get all skills for user
+      const skills = await knex("skills")
+        .where({ user_id: decodedToken.id })
+        .select("*");
+      res.json({ skills });
+    } catch (e) {
+      console.log(e);
+      res.status(400).json({ error: e });
+    }
+  })
+  .post("/skills", async (req, res) => {
+    decodedToken = authorize(req.headers.authorization);
+    
   });
 
+function authorize(auth) {
+  // auth = req.headers.authorization;
+
+  if (!auth) {
+    return res.status(401).send("no auth");
+  }
+
+  // Parse out the bearer token
+  const token = auth.split(" ")[1];
+  const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
+  return decodedToken;
+}
 module.exports = router;
