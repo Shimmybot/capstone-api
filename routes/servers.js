@@ -53,7 +53,7 @@ router
   })
   //getting servers based on a user id
   .get("/", async (req, res) => {
-    decodedToken = authorize(req.headers.authorization, res);
+    decodedToken = authorize(req.headers.authorization);
     knex("servers")
       .where("user_id", decodedToken.id)
       .select("*")
@@ -63,7 +63,7 @@ router
   })
   //updating server with userid
   .post("/:serverId", (req, res) => {
-    decodedToken = authorize(req.headers.authorization, res);
+    decodedToken = authorize(req.headers.authorization);
     knex("servers")
       .where("id", req.params.serverId)
       .update({ user_id: decodedToken.id })

@@ -55,7 +55,7 @@ router
   })
   //get info for specific user
   .get("/current", async (req, res) => {
-    decodedToken = authorize(req.headers.authorization, res);
+    decodedToken = authorize(req.headers.authorization);
     try {
       // log the decoded token to the console
       console.log(decodedToken);
@@ -74,7 +74,7 @@ router
   })
   //get skills for specific user
   .get("/skills", async (req, res) => {
-    decodedToken = authorize(req.headers.authorization, res);
+    decodedToken = authorize(req.headers.authorization);
     try {
       // log the decoded token to the console
       console.log(decodedToken);
@@ -90,7 +90,7 @@ router
     }
   })
   .post("/skills", async (req, res) => {
-    decodedToken = authorize(req.headers.authorization, res);
+    decodedToken = authorize(req.headers.authorization);
   });
 
 module.exports = router;
