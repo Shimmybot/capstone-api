@@ -29,9 +29,9 @@ router
           await page.screenshot({ path: `.${imgPath}` });
           await browser.close();
         });
+      //inserting into database
       knex("servers")
         .whereNot("url", url)
-        // .select("*")
         .insert({
           id: id,
           user_id: null,
@@ -40,19 +40,34 @@ router
           server_level: level,
           health: health,
         })
-        .then((result) => {
-          console.log(result);
-        });
+        .then((result) => {});
       res.status(200);
       res.send("Successful search");
     });
   })
+  //getting servers based on a user id
   .get("/:user", (req, res) => {
     knex("servers")
       .where("user_id", req.params.user)
       .select("*")
       .then((query) => {
         res.send(query);
+      });
+  })
+  //updating server with userid
+  .post("/:serverId", (req, res) => {
+    userId = req.body.userId;
+    knex("servers")
+      .where("id", req.params.serverId)
+      .update({ user_id: userId })
+      .then((result) => {
+        res.status(200);
+        res.send("user updated");
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(400);
+        res.send("update error");
       });
   });
 
