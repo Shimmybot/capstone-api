@@ -1,8 +1,10 @@
 const knexConfig = require("../knexfile");
 const knex = require("knex")(knexConfig["development"]);
 const router = require("express").Router();
+const { expressjwt: jwt } = require("express-jwt");
 
 router
+  .post("/signup", (req, res) => {})
   //get info for specific user
   .get("/:userId", (req, res) => {
     knex("users")
