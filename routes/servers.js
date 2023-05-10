@@ -42,8 +42,7 @@ router
           health: health,
         })
         .then((result) => {});
-      res.status(200);
-      res.send("Successful search");
+      res.status(200).send("Successful search");
     });
   })
   //getting servers based on a user id
@@ -62,13 +61,11 @@ router
       .where("id", req.params.serverId)
       .update({ user_id: userId })
       .then((result) => {
-        res.status(200);
-        res.send("user updated");
+        res.status(200).send("user updated");
       })
       .catch((err) => {
         console.log(err);
-        res.status(400);
-        res.send("update error");
+        res.status(400).send("update error");
       });
   });
 
