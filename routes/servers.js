@@ -5,6 +5,7 @@ const router = require("express").Router();
 const axios = require("axios");
 const puppeteer = require("puppeteer");
 const { v4: uuidv4 } = require("uuid");
+const { expressjwt: jwt } = require("express-jwt");
 
 router
   .post("/", (req, res) => {
