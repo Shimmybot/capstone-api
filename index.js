@@ -10,6 +10,7 @@ const usersRoute = require("./routes/users");
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static("public"));
 
 app.use("/api/servers", serversRoute);
 app.use("/api/users", usersRoute);
