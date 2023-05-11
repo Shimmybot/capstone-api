@@ -8,7 +8,7 @@ const app = express();
 const serversRoute = require("./routes/servers");
 const usersRoute = require("./routes/users");
 
-app.use(cors());
+app.use(cors({origin:"http://localhost:3000"}));
 app.use(express.json());
 app.use(express.static("public"));
 

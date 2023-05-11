@@ -53,6 +53,7 @@ router
   })
   //getting servers based on a user id
   .get("/", async (req, res) => {
+    console.log(req.headers.authorization);
     decodedToken = authorize(req.headers.authorization);
     knex("servers")
       .where("user_id", decodedToken.id)

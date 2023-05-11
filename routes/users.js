@@ -8,7 +8,7 @@ const { authorize } = require("../utils");
 
 router
   //signup endpoint
-  .post("/signup", (req, res) => {
+  .post("/signup", async (req, res) => {
     const { username, password } = req.body;
     const id = uuidv4();
     if (!username || !password) {
@@ -19,14 +19,20 @@ router
       username: username,
       password: bcrypt.hashSync(password),
     };
-    knex("users")
-      .insert(newUser)
-      .then((result) => {
-        res.status(200).send("user added");
-      })
-      .catch((err) => {
-        res.status(400).send(err);
-      });
+    const userExists = await knex("users").where({ username }).first();
+
+    if (!userExists) {
+      knex("users")
+        .insert(newUser)
+        .then((result) => {
+          res.status(200).send("user added");
+        })
+        .catch((err) => {
+          res.status(400).send(err);
+        });
+    } else {
+      res.send("User Exists");
+    }
   })
   .post("/login", async (req, res) => {
     const { username, password } = req.body;
