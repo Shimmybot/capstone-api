@@ -93,15 +93,43 @@ router
   //updating server with userid
   .post("/:serverId", (req, res) => {
     decodedToken = authorize(req.headers.authorization);
+    const serverId = req.params.serverId;
+    const { damage } = req.body;
     knex("servers")
-      .where("id", req.params.serverId)
-      .update({ user_id: decodedToken.id })
+      .where("id", serverId)
+      .select("*")
       .then((result) => {
-        res.status(200).send("user updated");
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(400).send("update error");
+        const data = result[0];
+        if (data.user_id === decodedToken.id) {
+          res.send("You own this server");
+        } else {
+          const totalDmg = data.health - damage;
+          console.log(totalDmg);
+          if (totalDmg > 0) {
+            knex("servers")
+              .where("id", req.params.serverId)
+              .update({ health: totalDmg })
+              .then((result) => {
+                res.status(200).send("server updated");
+              })
+              .catch((err) => {
+                console.log(err);
+                res.status(400).send("update error");
+              });
+          } else {
+            const newHealth = data.server_level * 10;
+            knex("servers")
+              .where("id", req.params.serverId)
+              .update({ user_id: decodedToken.id, health: newHealth })
+              .then((result) => {
+                res.status(200).send("user updated");
+              })
+              .catch((err) => {
+                console.log(err);
+                res.status(400).send("update error");
+              });
+          }
+        }
       });
   });
 
