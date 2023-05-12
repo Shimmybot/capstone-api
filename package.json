@@ -23,6 +23,7 @@
     "passport": "^0.6.0",
     "pg": "^8.10.0",
     "puppeteer": "^20.1.2",
+    "robots-txt-parser": "^2.0.3",
     "uuid": "^9.0.0"
   }
 }
