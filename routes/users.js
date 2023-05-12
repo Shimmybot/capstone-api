@@ -61,7 +61,7 @@ router
   })
   //get info for specific user
   .get("/current", async (req, res) => {
-    decodedToken = authorize(req.headers.authorization);
+    const decodedToken = authorize(req.headers.authorization);
     try {
       // log the decoded token to the console
       console.log(decodedToken);
@@ -80,7 +80,7 @@ router
   })
   //get skills for specific user
   .get("/skills", async (req, res) => {
-    decodedToken = authorize(req.headers.authorization);
+    const decodedToken = authorize(req.headers.authorization);
     try {
       // log the decoded token to the console
       console.log(decodedToken);
@@ -89,14 +89,31 @@ router
       const skills = await knex("skills")
         .where({ user_id: decodedToken.id })
         .select("*");
-      res.json({ skills });
+      res.json(skills);
     } catch (e) {
       console.log(e);
       res.status(400).json({ error: e });
     }
   })
   .post("/skills", async (req, res) => {
-    decodedToken = authorize(req.headers.authorization);
+    const decodedToken = authorize(req.headers.authorization);
+    const { skill_name, skill_level, damage } = req.body;
+    const hasSkill = await knex("skills").where({ skill_name }).first();
+    if (!hasSkill) {
+      const id = uuidv4();
+      const newSkill = {
+        id: id,
+        user_id: decodedToken.id,
+        skill_name: skill_name,
+        skill_level: skill_level,
+        damage: damage,
+      };
+      knex("skills")
+        .insert(newSkill)
+        .then(() => {
+          res.send("sucess");
+        });
+    }
   });
 
 module.exports = router;
