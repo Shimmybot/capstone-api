@@ -101,7 +101,7 @@ router
       .where({ id })
       .then((result) => {
         if (result.length > 0) {
-          res.status(200).send({ exists: true });
+          res.status(200).send(result);
         } else {
           res.status(404).send({ exists: false });
         }
