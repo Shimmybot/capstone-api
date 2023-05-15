@@ -4,13 +4,14 @@ const env = require("dotenv").config();
  * @type { Object.<string, import("knex").Knex.Config> }
  */
 module.exports = {
-  development: {
-    client: "mysql",
+  production: {
+    client: "mysql2",
     connection: {
-      host: process.env.DB_LOCAL_HOST,
-      database: process.env.DB_NAME,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASS,
+      host: process.env.MYSQLHOST,
+      database: process.env.MYSQLDATABASE,
+      user: process.env.MYSQLUSER,
+      password: process.env.MYSQLPASSWORD,
+      port: process.env.MYSQLPORT,
     },
     migrations: {
       tableName: "knex_migrations",
