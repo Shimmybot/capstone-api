@@ -1,6 +1,6 @@
 const { response } = require("express");
 const knexConfig = require("../knexfile");
-const knex = require("knex")(knexConfig["development"]);
+const knex = require("knex")(knexConfig["production"]);
 const router = require("express").Router();
 const axios = require("axios");
 const puppeteer = require("puppeteer");
@@ -66,7 +66,10 @@ router
                     height: 1024,
                   },
                 })
-                .then(async (browser) => {
+                .then(async () => {
+                  const browser = await puppeteer.connect({
+                    browserWSEndpoint: process.env.browserless,
+                  });
                   const page = await browser.newPage();
                   await page.goto(url);
                   await page.screenshot({ path: `./public${imgPath}` });

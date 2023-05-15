@@ -1,5 +1,5 @@
 const knexConfig = require("../knexfile");
-const knex = require("knex")(knexConfig["development"]);
+const knex = require("knex")(knexConfig["production"]);
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -62,7 +62,6 @@ router
   .get("/current", async (req, res) => {
     const decodedToken = authorize(req.headers.authorization);
     try {
-
       // get user using 'first'
       const user = await knex("users").where({ id: decodedToken.id }).first();
 
@@ -79,7 +78,6 @@ router
   .get("/skills", async (req, res) => {
     const decodedToken = authorize(req.headers.authorization);
     try {
-
       // get all skills for user
       const skills = await knex("skills")
         .where({ user_id: decodedToken.id })
