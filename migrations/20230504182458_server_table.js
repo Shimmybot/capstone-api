@@ -9,6 +9,8 @@ exports.up = function (knex) {
     table.string("url").notNullable();
     table.string("image_url");
     table.integer("server_level");
+    table.integer("health");
+    table.string("server_name");
   });
 };
 

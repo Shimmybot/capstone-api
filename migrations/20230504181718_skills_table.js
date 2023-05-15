@@ -7,9 +7,9 @@ exports.up = function (knex) {
       .onUpdate("CASCADE")
       .onDelete("CASCADE");
     table.string("skill_name");
-    table.string("skill_description");
     table.integer("user_level");
     table.timestamps("true", "true");
+    table.integer("damage")
   });
 };
 

@@ -8,6 +8,7 @@ const { v4: uuidv4 } = require("uuid");
 const { authorize } = require("../utils");
 const jwt = require("jsonwebtoken");
 const cheerio = require("cheerio");
+const fs = require("fs");
 
 function getLevel(data) {
   const html = cheerio.load(data);
@@ -31,8 +32,8 @@ function getLevel(data) {
 
 router
   .post("/", async (req, res) => {
-    id = uuidv4();
-    const imgPath = `/images/${id}.png`;
+    let id = uuidv4();
+    let imgPath = `/images/${id}.png`;
     const url = req.body.url;
     const exists = await knex("servers").where({ url }).first();
     //axios call to get page info
@@ -82,6 +83,24 @@ router
           res.status(err.response.status).send(err);
         });
     } else {
+      id = exists.id;
+      imgPath = `/images/${id}.png`;
+      if (!fs.existsSync(`./public/images/${id}`)) {
+        puppeteer
+          .launch({
+            defaultViewport: {
+              width: 1280,
+              height: 1024,
+            },
+          })
+          .then(async (browser) => {
+            const page = await browser.newPage();
+            await page.goto(url);
+            await page.screenshot({ path: `./public${imgPath}` });
+            await browser.close();
+          });
+      }
+
       res.status(200).send(exists);
     }
   })
