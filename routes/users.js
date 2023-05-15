@@ -62,8 +62,6 @@ router
   .get("/current", async (req, res) => {
     const decodedToken = authorize(req.headers.authorization);
     try {
-      // log the decoded token to the console
-      console.log(decodedToken);
 
       // get user using 'first'
       const user = await knex("users").where({ id: decodedToken.id }).first();
@@ -81,8 +79,6 @@ router
   .get("/skills", async (req, res) => {
     const decodedToken = authorize(req.headers.authorization);
     try {
-      // log the decoded token to the console
-      console.log(decodedToken);
 
       // get all skills for user
       const skills = await knex("skills")

@@ -9,6 +9,26 @@ const { authorize } = require("../utils");
 const jwt = require("jsonwebtoken");
 const cheerio = require("cheerio");
 
+function getLevel(data) {
+  const html = cheerio.load(data);
+  const all = html("*").toArray();
+  const allNum = all.length;
+  const empty = html("*:empty").toArray();
+  const emptyNum = empty.length;
+  console.log(emptyNum);
+  let total = 0;
+  if (emptyNum !== 0) {
+    total = Math.round(allNum / emptyNum);
+  } else {
+    total = allNum;
+  }
+  let modifier = Math.random() * 100;
+  if (modifier === 0) {
+    modifier = 1;
+  }
+  return Math.round(total * modifier);
+}
+
 router
   .post("/", async (req, res) => {
     id = uuidv4();
@@ -16,15 +36,15 @@ router
     const url = req.body.url;
     const exists = await knex("servers").where({ url }).first();
     //axios call to get page info
-
     if (!exists) {
       axios
         .get(url)
         .then((response) => {
-          const level = Math.round(response.data.length / 1000);
+          const level = getLevel(response.data);
           const health = level * 10;
           const html = cheerio.load(response.data);
           const title = html("title").text();
+          console.log(html);
           //inserting into database
           knex("servers")
             .insert({
