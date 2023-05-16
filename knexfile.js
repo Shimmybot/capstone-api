@@ -5,7 +5,7 @@ const env = require("dotenv").config();
  */
 module.exports = {
   production: {
-    client: "mysql2",
+    client: "mysql",
     connection: {
       host: process.env.MYSQLHOST,
       database: process.env.MYSQLDATABASE,

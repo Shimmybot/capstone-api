@@ -91,7 +91,10 @@ router
   .post("/skills", async (req, res) => {
     const decodedToken = authorize(req.headers.authorization);
     const { skill_name, skill_level, damage } = req.body;
-    const hasSkill = await knex("skills").where({ skill_name }).first();
+    const user_id = decodedToken.id;
+    const hasSkill = await knex("skills")
+      .where({ skill_name: skill_name, user_id: user_id })
+      .first();
     if (!hasSkill) {
       const id = uuidv4();
       const newSkill = {
@@ -104,8 +107,10 @@ router
       knex("skills")
         .insert(newSkill)
         .then(() => {
-          res.send("sucess");
+          res.send("success");
         });
+    } else {
+      res.status(400).send("You have this skill");
     }
   });
 
