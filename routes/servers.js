@@ -76,6 +76,7 @@ router
                 await page.goto(url);
                 await page.screenshot({ path: `./public${imgPath}` });
                 console.log("screenshot took");
+                await browser.close();
               } catch (error) {
                 console.log(error);
               }
@@ -100,6 +101,7 @@ router
           await page.goto(url);
           await page.screenshot({ path: `./public${imgPath}` });
           console.log("screenshot took");
+          await browser.close();
         } catch (error) {
           console.log(error);
         }
