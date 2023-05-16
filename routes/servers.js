@@ -83,19 +83,17 @@ router
       id = exists.id;
       imgPath = `/images/${id}.png`;
       if (!fs.existsSync(`./public/images/${id}`)) {
-        puppeteer
-          .launch({
-            defaultViewport: {
-              width: 1280,
-              height: 1024,
-            },
-          })
-          .then(async (browser) => {
-            const page = await browser.newPage();
-            await page.goto(url);
-            await page.screenshot({ path: `./public${imgPath}` });
-            await browser.close();
+        try {
+          const browser = await puppeteer.connect({
+            browserWSEndpoint: `${process.env.browserless}?--window-size=1280,1024`,
           });
+          const page = await browser.newPage();
+          await page.goto(url);
+          await page.screenshot({ path: `./public${imgPath}` });
+          await browser.close();
+        } catch (error) {
+          console.log(error);
+        }
       }
 
       res.status(200).send(exists);
