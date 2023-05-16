@@ -90,7 +90,6 @@ router
           const page = await browser.newPage();
           await page.goto(url);
           await page.screenshot({ path: `./public${imgPath}` });
-          await browser.close();
         } catch (error) {
           console.log(error);
         }
