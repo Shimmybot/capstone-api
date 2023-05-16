@@ -9,6 +9,16 @@ const { authorize } = require("../utils");
 const jwt = require("jsonwebtoken");
 const cheerio = require("cheerio");
 const fs = require("fs");
+const IS_PRODUCTION = true;
+
+const getBrowser = () =>
+  IS_PRODUCTION
+    ? // Connect to browserless so we don't run Chrome on the same hardware in production
+      puppeteer.connect({
+        browserWSEndpoint: `${process.env.browserless}--window-size=1280,1024`,
+      })
+    : // Run the browser locally while in development
+      puppeteer.launch();
 
 function getLevel(data) {
   const html = cheerio.load(data);
@@ -60,9 +70,7 @@ router
             .then(async (result) => {
               //gets screenshot of page
               try {
-                const browser = await puppeteer.connect({
-                  browserWSEndpoint: `${process.env.browserless}?--window-size=1280,1024`,
-                });
+                const browser = await getBrowser;
                 const page = await browser.newPage();
                 console.log(page);
                 await page.goto(url);
@@ -86,9 +94,7 @@ router
       imgPath = `/images/${id}.png`;
       if (!fs.existsSync(`./public/images/${id}`)) {
         try {
-          const browser = await puppeteer.connect({
-            browserWSEndpoint: `${process.env.browserless}?--window-size=1280,1024`,
-          });
+          const browser = await getBrowser;
           const page = await browser.newPage();
           console.log(page);
           await page.goto(url);
