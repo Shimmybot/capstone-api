@@ -59,22 +59,16 @@ router
             })
             .then(async (result) => {
               //gets screenshot of page
-              puppeteer
-                .launch({
-                  defaultViewport: {
-                    width: 1280,
-                    height: 1024,
-                  },
-                })
-                .then(async () => {
-                  const browser = await puppeteer.connect({
-                    browserWSEndpoint: process.env.browserless,
-                  });
-                  const page = await browser.newPage();
-                  await page.goto(url);
-                  await page.screenshot({ path: `./public${imgPath}` });
-                  await browser.close();
+              try {
+                const browser = await puppeteer.connect({
+                  browserWSEndpoint: `${process.env.browserless}?--window-size=1280,1024`,
                 });
+                const page = await browser.newPage();
+                await page.goto(url);
+                await page.screenshot({ path: `./public${imgPath}` });
+              } catch (error) {
+                console.log(error);
+              }
               const server = await knex("servers").where({ id }).first();
               res.status(200).send(server);
             })
