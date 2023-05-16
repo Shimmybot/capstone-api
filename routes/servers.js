@@ -64,8 +64,10 @@ router
                   browserWSEndpoint: `${process.env.browserless}?--window-size=1280,1024`,
                 });
                 const page = await browser.newPage();
+                console.log(page);
                 await page.goto(url);
                 await page.screenshot({ path: `./public${imgPath}` });
+                console.log("screenshot took");
               } catch (error) {
                 console.log(error);
               }
@@ -88,8 +90,10 @@ router
             browserWSEndpoint: `${process.env.browserless}?--window-size=1280,1024`,
           });
           const page = await browser.newPage();
+          console.log(page);
           await page.goto(url);
           await page.screenshot({ path: `./public${imgPath}` });
+          console.log("screenshot took");
         } catch (error) {
           console.log(error);
         }
