@@ -70,7 +70,7 @@ router
             .then(async (result) => {
               //gets screenshot of page
               try {
-                const browser = await getBrowser;
+                const browser = await getBrowser();
                 const page = await browser.newPage();
                 console.log(page);
                 await page.goto(url);
@@ -94,7 +94,7 @@ router
       imgPath = `/images/${id}.png`;
       if (!fs.existsSync(`./public/images/${id}`)) {
         try {
-          const browser = await getBrowser;
+          const browser = await getBrowser();
           const page = await browser.newPage();
           console.log(page);
           await page.goto(url);
